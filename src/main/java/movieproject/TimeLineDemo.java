@@ -5,9 +5,12 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import info.movito.themoviedbapi.*;
@@ -21,31 +24,49 @@ public class TimeLineDemo extends Application {
 
 	private static TmdbApi tmdbApi;
 	private static SessionToken sessionToken;
-	
+	private Label message = new Label("");
+    VBox box = new VBox();
 	@Override
     public void start(Stage primaryStage) {
         
 		Button btn = new Button();
-        btn.setText("Let the tendies hit the floor");
+		
+		
+        btn.setText("I'm a button plz click");
+        
+        ScrollPane scrollPane = new ScrollPane();
+        scrollPane.setVbarPolicy(ScrollBarPolicy.ALWAYS);
+        
+        BorderPane root = new BorderPane();
+        StackPane left = new StackPane();
+        
+       
+        left.getChildren().add(btn);
+        root.setLeft(left);
+        root.setCenter(box);
+        
         btn.setOnAction(new EventHandler<ActionEvent>() {
  
             //@Override
             public void handle(ActionEvent event) {
-                System.out.println(sessionToken.toString());
+                System.out.println(tmdbApi.toString());
+                message.setText(sessionToken.toString());
+                box.getChildren().add(new Label("Let the tendies hit the floor"));
             }
         });
-        ScrollPane scrollPane = new ScrollPane();
-        scrollPane.setVbarPolicy(ScrollBarPolicy.ALWAYS);
+       
         
-        StackPane root = new StackPane();
-        root.getChildren().add(btn);
+       
+        
         scrollPane.setContent(root);
-        
-        scrollPane.setFitToHeight(true);
+       scrollPane.setFitToHeight(true);
         scrollPane.setFitToWidth(true);
 
  Scene scene = new Scene(scrollPane, 600, 700);
-
+ 		
+ 		left.setPrefWidth(scene.getWidth()/3);
+ 		left.setPrefHeight(scene.getHeight());
+ 		box.setPrefHeight(scene.getHeight());
         primaryStage.setTitle("Hello World!");
         primaryStage.setScene(scene);
         primaryStage.show();
