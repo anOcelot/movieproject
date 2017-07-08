@@ -5,6 +5,8 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
@@ -22,8 +24,9 @@ public class TimeLineDemo extends Application {
 	
 	@Override
     public void start(Stage primaryStage) {
-        Button btn = new Button();
-        btn.setText("Say 'Hello World'");
+        
+		Button btn = new Button();
+        btn.setText("Let the tendies hit the floor");
         btn.setOnAction(new EventHandler<ActionEvent>() {
  
             //@Override
@@ -31,16 +34,26 @@ public class TimeLineDemo extends Application {
                 System.out.println(sessionToken.toString());
             }
         });
+        ScrollPane scrollPane = new ScrollPane();
+        scrollPane.setVbarPolicy(ScrollBarPolicy.ALWAYS);
         
         StackPane root = new StackPane();
         root.getChildren().add(btn);
+        scrollPane.setContent(root);
+        
+        scrollPane.setFitToHeight(true);
+        scrollPane.setFitToWidth(true);
 
- Scene scene = new Scene(root, 300, 250);
+ Scene scene = new Scene(scrollPane, 600, 700);
 
         primaryStage.setTitle("Hello World!");
         primaryStage.setScene(scene);
         primaryStage.show();
+        
+       
     }
+	
+	
  public static void main(String[] args) {
         
 	 	tmdbApi = new TmdbApi("1ff803482bfef0b19c8614ac392775e8");
