@@ -3,7 +3,9 @@ package movieproject;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -29,97 +31,71 @@ import info.movito.themoviedbapi.model.*;
 import info.movito.themoviedbapi.model.config.*;
 import info.movito.themoviedbapi.model.core.*;
 import info.movito.themoviedbapi.model.people.*;
+import javafx.fxml.FXML;
 
 public class TimeLineDemo extends Application {
 
+	//static API and sessionToken
 	private static TmdbApi tmdbApi;
 	private static SessionToken sessionToken;
-	private static VBox resultsPane = new VBox();
-	private BorderPane root = new BorderPane();
-	TextField searchBox = new TextField("Enter the name of an Actor");
+	
+	//the @FXML means the FXML layout contains instructions to inject these classes, 
+	//so they don't need to be instantiated. 
+	@FXML private VBox resultsPane;
+	@FXML private Button searchButton;
+	@FXML private TextField searchBox;
+	@FXML private VBox contentPane;
+	@FXML private VBox contentPane2;
+	
     
-	@Override
 	
-	
-	
-    public void start(Stage primaryStage) {
-        
-		Button btn = new Button();
-		btn.setText("Search");
-		//TextField searchBox = new TextField("Enter the name of an Actor");
-		searchBox.setPrefWidth(400);
+	//when this method is called, JavaFX instantiates the @FXML classes
+	//in the background according to the layout. 
+	public void initialize(){
 		
-        //placeholders for other features
-        Pane left = new Pane();
-        Pane right = new Pane();
-        Pane top = new Pane();
+		 //assign button actions in here. searchButton can be accessed even though
+		 //there is no code here instantiating it.
+		 
+		searchButton.setOnAction(new EventHandler<ActionEvent>() {
+			 
+			  public void handle(ActionEvent event) {
+	               demoSearchFeatures(searchBox.getText());
+	               resultsPane.getChildren().add(new Label("Let the tendies hit the floor"));
+	            } 
+			 
+		 });
+		 
+		contentPane.getChildren().add(new Label("Stuff can go here."));
+		contentPane2.getChildren().add(new Label("Stuff can go here too."));
 
-        
-        root.setStyle("-fx-background-color:forestgreen");
-        left.setStyle("-fx-background-color:darkgreen");
-        top.setStyle("-fx-background-color:seagreen");
-        right.setStyle("-fx-background-color:mediumseagreen");
-        resultsPane.setStyle("-fx-background-color:coral");
-        
-       
-       
-        
-        FlowPane searchPane = new FlowPane();
-        searchPane.setPrefWidth(200);
-        searchPane.setHgap(10);
-        searchPane.getChildren().addAll(searchBox, btn);
-        
-        root.setCenter(searchPane);
-        root.setMargin(searchPane, new Insets(25,25, 25, 25));
-        
-        root.setLeft(left);
-        root.setRight(right);
-        root.setTop(top);
-        root.setBottom(resultsPane);
-       
-        ScrollPane scrollPane = new ScrollPane(root);
-        scrollPane.setVbarPolicy(ScrollBarPolicy.ALWAYS);
-       
-        
-        btn.setOnAction(new EventHandler<ActionEvent>() {
+		 
+
+		
+	}
+	
  
-            //@Override
-            public void handle(ActionEvent event) {
-               demoSearchFeatures(searchBox.getText());
-               resultsPane.getChildren().add(new Label("Let the tendies hit the floor"));
-            }
-        });
-       
-        //Drop the borderpane into the stack pane
-        
-        scrollPane.setFitToHeight(true);
-        scrollPane.setFitToWidth(true);
-        
-        Scene scene = new Scene(scrollPane, 1200, 600);
-        
-        double sideWidth = scene.getWidth()/3;
-        double height = scene.getHeight()/3;
-        left.setPrefSize(sideWidth, height);
-        right.setPrefSize(sideWidth, height);
- 		top.setPrefSize(scene.getWidth(), height);
- 		searchPane.setPrefSize(sideWidth, height);
- 		resultsPane.setPrefSize(scene.getWidth(), height);
- 		
- 		
- 		searchPane.setPrefWidth(scene.getWidth()/2);
- 		searchPane.setPrefHeight(scene.getHeight()/3);
- 		
- 	
-        primaryStage.setTitle("Hello World!");
-        primaryStage.setScene(scene);
-        primaryStage.show();
-        
-       
-    }
+	
+    @Override
+	public void start(Stage stage) throws Exception{
+		
+    	 //loader object interacts with fxml layout. Use "gluon scene builder" plugin 
+    	 //if you wanna mess with the fxml layout in (resources/Sample.fxml)
+		 FXMLLoader loader = new FXMLLoader(getClass().getResource("/Sample.fxml"));
+		 
+		 //loaders gonna load
+		
+		 Scene scene = new Scene((Parent) loader.load());
+		 
+		
+		 stage.setTitle("Scene title");
+		 stage.setScene(scene);
+		 stage.show();
+	}
 	
 
 	
-	private static void demoSearchFeatures(String str) {
+	private void demoSearchFeatures(String str) {
+		
 		TmdbSearch tmdbSearch = tmdbApi.getSearch();
 		TmdbPeople tmdbPeople = tmdbApi.getPeople();
 		// search for movies containing "civil war" in title
@@ -149,14 +125,15 @@ public class TimeLineDemo extends Application {
 	
  public static void main(String[] args) {
         
-	 	tmdbApi = new TmdbApi("1ff803482bfef0b19c8614ac392775e8");
+	 tmdbApi = new TmdbApi("1ff803482bfef0b19c8614ac392775e8");
 		
 		// certain methods in TMDb API require a session id as a parameter, so
 		// let's generate it and have it ready
 		sessionToken = getSessionToken();
-		
+	
 	 	launch(args);
        
+	  
     }
  
  

@@ -1,0 +1,35 @@
+
+
+
+
+.tab-content-area {
+    -fx-background-color:seagreen;
+    -fx-border-width:0px;
+   
+   
+   
+}
+
+.tab {
+     -fx-background-insets: 0 0 0 0
+}
+
+
+.tab:selected {
+    -fx-background-color:seagreen;
+    -fx-background-insets: 0 0 0 0, 0, 0;
+}
+
+
+
+
+
+.tab-header-area {
+    -fx-background-color:seagreen;
+   
+}
+
+.scroll-pane {
+    -fx-background: transparent;
+}
+
