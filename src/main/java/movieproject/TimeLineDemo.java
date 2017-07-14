@@ -32,6 +32,7 @@ import info.movito.themoviedbapi.model.config.*;
 import info.movito.themoviedbapi.model.core.*;
 import info.movito.themoviedbapi.model.people.*;
 import javafx.fxml.FXML;
+import javafx.scene.image.*;
 
 public class TimeLineDemo extends Application {
 
@@ -111,7 +112,8 @@ public class TimeLineDemo extends Application {
 			resultsPane.getChildren().addAll(nameLabel);
 			
 			for (PersonCredit c:credits.getCast()){
-				resultsPane.getChildren().add(new Label(c.getMovieTitle()));
+				Image cover = new Image ("https://image.tmdb.org/t/p/original/" + c.getPosterPath(), 150, 100, false, false);
+				resultsPane.getChildren().addAll(new ImageView(cover), new Label(c.getMovieTitle()));
 			}
 			
 			
