@@ -22,18 +22,11 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import java.util.Iterator;
-import info.movito.themoviedbapi.*;
-import info.movito.themoviedbapi.TmdbMovies.MovieMethod;
-import info.movito.themoviedbapi.TmdbPeople.PersonResultsPage;
-import info.movito.themoviedbapi.model.*;
-import info.movito.themoviedbapi.model.config.*;
-import info.movito.themoviedbapi.model.core.*;
-import info.movito.themoviedbapi.model.people.*;
-import javafx.fxml.FXML;
-import javafx.scene.image.*;
-
-
+/**
+ * 
+ * @author Pieter Holleman
+ *
+ */
 public class TimeLineDemo extends Application {
 
 	/** static API. */
@@ -130,13 +123,11 @@ public class TimeLineDemo extends Application {
 			resultsPane.getChildren().addAll(nameLabel);
 			
 			/** loop across person's credits and print them */
-			for (PersonCredit c : credits.getCast()) {
-				
-				
-				//Image cover = new Image ("https://image.tmdb.org/t/p/original/" + c.getPosterPath(), 150, 100, false, false);
-				resultsPane.getChildren()
-				.addAll(new Label(c.getMovieTitle()));
 
+				
+			for (PersonCredit c:credits.getCast()){
+				Image cover = new Image ("https://image.tmdb.org/t/p/original/" + c.getPosterPath(), 150, 100, false, false);
+				resultsPane.getChildren().addAll(new ImageView(cover), new Label(c.getMovieTitle()));
 			}
 
 		}
