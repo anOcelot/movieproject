@@ -14,10 +14,12 @@ import info.movito.themoviedbapi.model.people.Person;
 import info.movito.themoviedbapi.model.people.PersonCredit;
 import info.movito.themoviedbapi.model.people.PersonCredits;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -33,13 +35,6 @@ import javafx.stage.Stage;
  *
  */
 public class TimeLineDemo extends Application {
-
-
-	/** static API. */
-	private static TmdbApi tmdbApi;
-	
-	/** static sessionToken. */
-	private static SessionToken sessionToken;
 	
 
 	/** might run faster if these are here. */
@@ -54,10 +49,8 @@ public class TimeLineDemo extends Application {
 	/** list of movie credits without release dates. */
 	private LinkedList<PersonCredit> datelessCredits;
 
-
-	/** custom comparator for comparing movie release dates */
-	DateComparator dateComparator;
-	
+	/** custom comparator for comparing movie release dates. */
+	private DateComparator dateComparator;
 	
 	/** Pane to store results. */
 	@FXML private VBox resultsPane;
@@ -89,6 +82,9 @@ public class TimeLineDemo extends Application {
 		tmdbPeople = tmdbApi.getPeople();
 		
 		searchButton.setOnAction(new SearchHandler());
+		
+		resultsPane.setPadding(new Insets(20));
+		resultsPane.setSpacing(10);
 
 		contentPane.getChildren()
 			.add(new Label("Stuff can go here."));
@@ -130,20 +126,23 @@ public class TimeLineDemo extends Application {
 	 */
 	private void demoSearchFeatures(final String str) {
 
+		/** clear the pane **/
+		resultsPane.getChildren().clear();
+		
 		/** first, find the people. */
 		PersonResultsPage results = tmdbSearch
 				.searchPerson(str, true, 0);
 		
 		/** Iterator to access results */
 		Iterator<Person> iterator = results.iterator();
+		
+		dateComparator = new DateComparator();
 
 		while (iterator.hasNext()) {
 			
 			datedCredits = new LinkedList<PersonCredit>();
 			
 			datelessCredits = new LinkedList<PersonCredit>();
-			
-			dateComparator = new DateComparator();
 
 			Person person = iterator.next();
 
@@ -185,14 +184,26 @@ public class TimeLineDemo extends Application {
 			
 			// add movies without known release dates at beginning of list
 			for (PersonCredit c:datelessCredits){
-				Image cover = new Image ("https://image.tmdb.org/t/p/original/" + c.getPosterPath(), 150, 100, false, false);
-				resultsPane.getChildren().addAll(new ImageView(cover), new Label(c.getMovieTitle()), new Label("Release Date Unknown\n\n"));
+				Image cover = new Image ("https://image.tmdb.org/t/p/original/" + c.getPosterPath(), 
+						240, 
+						360, 
+						false, 
+						false);
+				
+				resultsPane.getChildren().addAll(new ImageView(cover),
+						new Label(c.getMovieTitle() + "- Release Date Unknown"));
 			}
 			
 			// add rest of movies
 			for (PersonCredit c:datedCredits){
-				Image cover = new Image ("https://image.tmdb.org/t/p/original/" + c.getPosterPath(), 150, 100, false, false);
-				resultsPane.getChildren().addAll(new ImageView(cover), new Label(c.getMovieTitle()), new Label(c.getReleaseDate() + "\n\n"));
+				Image cover = new Image("https://image.tmdb.org/t/p/original/" + c.getPosterPath(),
+						240, 
+						360, 
+						false, 
+						false);
+				
+				resultsPane.getChildren().addAll(new Label(c.getMovieTitle() + " - " + c.getReleaseDate() + "\n\n"),
+						new ImageView(cover));
 			}
 		}
 	}
@@ -204,13 +215,15 @@ public class TimeLineDemo extends Application {
 	 *
 	 */
 	private class SearchHandler implements EventHandler<ActionEvent> {
-
+		
+		
 		/**
 		 * Event handler to trigger search.
 		 * @param event triggers search
 		 */
 		public void handle(final ActionEvent event) {
-		
+			
+			
 			demoSearchFeatures(searchBox.getText());
 			
 			
@@ -224,8 +237,8 @@ public class TimeLineDemo extends Application {
 	 */
 	public static void main(String[] args) {
 
-		TmdbApi tmdbApi = new TmdbApi("1ff803482bfef0b19c8614ac392775e8");
-		SessionToken sessionToken = getSessionToken();
+//		TmdbApi tmdbApi = new TmdbApi("1ff803482bfef0b19c8614ac392775e8");
+//		SessionToken sessionToken = getSessionToken();
 		
 		launch(args);
 
@@ -242,29 +255,28 @@ public class TimeLineDemo extends Application {
 		return sessionToken;
 	}
 
-	public void sortCreditList(LinkedList<PersonCredit> creditList){
+	public void sortCreditList(final LinkedList<PersonCredit> creditList){
 		DateComparator dateComparator = new DateComparator();
 		Collections.sort(creditList, dateComparator);
 	}
 	
-	public class DateComparator implements Comparator<PersonCredit>{
+	private class DateComparator implements Comparator<PersonCredit>{
 
-		public int compare(PersonCredit creditA, PersonCredit creditB) {
+		public int compare(final PersonCredit creditA, final PersonCredit creditB) {
 			String[] releaseDateA = creditA.getReleaseDate().split("-");
 			String[] releaseDateB = creditB.getReleaseDate().split("-");
 			
-			if(Integer.parseInt(releaseDateA[0]) > Integer.parseInt(releaseDateB[0])){
+			if(Integer.parseInt(releaseDateA[0]) > Integer.parseInt(releaseDateB[0])) {
 				return 1;
-			}
-			else if(Integer.parseInt(releaseDateA[0]) == Integer.parseInt(releaseDateB[0])){
-				if(Integer.parseInt(releaseDateA[1]) > Integer.parseInt(releaseDateB[1])){
+			} else if (Integer.parseInt(releaseDateA[0]) == Integer.parseInt(releaseDateB[0])) {
+				
+				if (Integer.parseInt(releaseDateA[1]) > Integer.parseInt(releaseDateB[1])) {
 					return 1;
-				}
-				else if(Integer.parseInt(releaseDateA[1]) == Integer.parseInt(releaseDateB[1])){
-					if(Integer.parseInt(releaseDateA[2]) > Integer.parseInt(releaseDateB[2])){
+				} else if (Integer.parseInt(releaseDateA[1]) == Integer.parseInt(releaseDateB[1])) {
+					
+					if (Integer.parseInt(releaseDateA[2]) > Integer.parseInt(releaseDateB[2])) {
 						return 1;
-					}
-					else if(Integer.parseInt(releaseDateA[2]) == Integer.parseInt(releaseDateB[2])){
+					} else if (Integer.parseInt(releaseDateA[2]) == Integer.parseInt(releaseDateB[2])) {
 						return 0;
 					}
 				}
