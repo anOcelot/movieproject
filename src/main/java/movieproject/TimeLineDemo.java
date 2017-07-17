@@ -20,6 +20,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 /**
@@ -29,14 +31,11 @@ import javafx.stage.Stage;
  */
 public class TimeLineDemo extends Application {
 
-	/** static API. */
-	private static TmdbApi tmdbApi;
-	/** static sessionToken. */
-	private static SessionToken sessionToken;
+
 	/** might run faster if these are here. */
-	private TmdbSearch tmdbSearch = tmdbApi.getSearch();
+	private TmdbSearch tmdbSearch; 
 	/** might run faster if these are here. */
-	private TmdbPeople tmdbPeople = tmdbApi.getPeople();
+	private TmdbPeople tmdbPeople; 
 
 	
 	
@@ -61,7 +60,12 @@ public class TimeLineDemo extends Application {
 	 */
 	public void initialize() {
 		
+		TmdbApi tmdbApi = new TmdbApi("1ff803482bfef0b19c8614ac392775e8");
+		
+		SessionToken sessionToken = getSessionToken();
+		
 		tmdbSearch = tmdbApi.getSearch();
+		
 		tmdbPeople = tmdbApi.getPeople();
 		
 		searchButton.setOnAction(new SearchHandler());
@@ -81,7 +85,7 @@ public class TimeLineDemo extends Application {
 	
 	@Override
 	public void start(final Stage stage) throws Exception {
-
+	
 		/** loader object interacts with FXML layout */
 		FXMLLoader loader = new FXMLLoader(getClass()
 				.getResource("/Sample.fxml"));
@@ -124,10 +128,15 @@ public class TimeLineDemo extends Application {
 			
 			/** loop across person's credits and print them */
 
+			//PersonCredit t = credits.getCast().get(0);
+			//Image cover = new Image ("https://image.tmdb.org/t/p/original/" + t.getPosterPath(), 240, 360, false, false);
+			//resultsPane.getChildren().add(new ImageView(cover));
+			for (PersonCredit c:credits.getCast()) {
+				Image cover = new Image ("https://image.tmdb.org/t/p/original/" + c.getPosterPath(), 240, 360, false, false);
+				resultsPane.getChildren()
+					.addAll(new ImageView(cover));
 				
-			for (PersonCredit c:credits.getCast()){
-				Image cover = new Image ("https://image.tmdb.org/t/p/original/" + c.getPosterPath(), 150, 100, false, false);
-				resultsPane.getChildren().addAll(new ImageView(cover), new Label(c.getMovieTitle()));
+				
 			}
 
 		}
@@ -160,8 +169,9 @@ public class TimeLineDemo extends Application {
 	 */
 	public static void main(String[] args) {
 
-		tmdbApi = new TmdbApi("1ff803482bfef0b19c8614ac392775e8");
-		sessionToken = getSessionToken();
+		TmdbApi tmdbApi = new TmdbApi("1ff803482bfef0b19c8614ac392775e8");
+		SessionToken sessionToken = getSessionToken();
+		
 		launch(args);
 
 	}
@@ -172,8 +182,8 @@ public class TimeLineDemo extends Application {
 	 */
 	private static SessionToken getSessionToken() {
 		
-		SessionToken sessionToken = 
-				new SessionToken("sessionid generated above");
+	SessionToken sessionToken = new SessionToken("sessionid generated above");
+	
 		return sessionToken;
 	}
 
