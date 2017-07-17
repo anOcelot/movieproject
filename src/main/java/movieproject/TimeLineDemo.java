@@ -1,7 +1,10 @@
 package movieproject;
 
+import java.time.LocalDate;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -185,13 +188,13 @@ public class TimeLineDemo extends Application {
 			
 			// add movies without known release dates at beginning of list
 			for (PersonCredit c:datelessCredits){
-				Image cover = new Image ("https://image.tmdb.org/t/p/original/" + c.getPosterPath(), 150, 100, false, false);
+				Image cover = new Image ("https://image.tmdb.org/t/p/original/" + c.getPosterPath(), 540, 800, false, false);
 				resultsPane.getChildren().addAll(new ImageView(cover), new Label(c.getMovieTitle()), new Label("Release Date Unknown\n\n"));
 			}
 			
 			// add rest of movies
 			for (PersonCredit c:datedCredits){
-				Image cover = new Image ("https://image.tmdb.org/t/p/original/" + c.getPosterPath(), 150, 100, false, false);
+				Image cover = new Image ("https://image.tmdb.org/t/p/original/" + c.getPosterPath(), 540, 800, false, false);
 				resultsPane.getChildren().addAll(new ImageView(cover), new Label(c.getMovieTitle()), new Label(c.getReleaseDate() + "\n\n"));
 			}
 		}
@@ -249,28 +252,59 @@ public class TimeLineDemo extends Application {
 	
 	public class DateComparator implements Comparator<PersonCredit>{
 
-		public int compare(PersonCredit creditA, PersonCredit creditB) {
-			String[] releaseDateA = creditA.getReleaseDate().split("-");
-			String[] releaseDateB = creditB.getReleaseDate().split("-");
+		public int compare(PersonCredit A, PersonCredit B){
 			
-			if(Integer.parseInt(releaseDateA[0]) > Integer.parseInt(releaseDateB[0])){
-				return 1;
-			}
-			else if(Integer.parseInt(releaseDateA[0]) == Integer.parseInt(releaseDateB[0])){
-				if(Integer.parseInt(releaseDateA[1]) > Integer.parseInt(releaseDateB[1])){
-					return 1;
-				}
-				else if(Integer.parseInt(releaseDateA[1]) == Integer.parseInt(releaseDateB[1])){
-					if(Integer.parseInt(releaseDateA[2]) > Integer.parseInt(releaseDateB[2])){
-						return 1;
-					}
-					else if(Integer.parseInt(releaseDateA[2]) == Integer.parseInt(releaseDateB[2])){
-						return 0;
-					}
-				}
-			}
-			return -1;
+			String[] releaseDateA = A.getReleaseDate().split("-");
+			String[] releaseDateB = B.getReleaseDate().split("-");
+			
+			LocalDate one = LocalDate.of(Integer.parseInt(releaseDateA[0]), 
+					Integer.parseInt(releaseDateA[1]), 
+					Integer.parseInt(releaseDateA[2]));
+			
+			LocalDate two = LocalDate.of(Integer.parseInt(releaseDateB[0]), 
+					Integer.parseInt(releaseDateB[1]), 
+					Integer.parseInt(releaseDateB[2]));
+			
+			if (one.isAfter(two))return 1;
+			else if (one.isEqual(two))return 0;
+			else return -1;
+			
+//			Calendar dateA = Calendar.getInstance();
+//			dateA.set(Integer.parseInt(releaseDateA[0]), 
+//					Integer.parseInt(releaseDateA[1]), 
+//					Integer.parseInt(releaseDateA[2]));
+//			
+//			Calendar dateB = Calendar.getInstance();
+//			dateA.set(Integer.parseInt(releaseDateB[0]), 
+//					Integer.parseInt(releaseDateB[1]), 
+//					Integer.parseInt(releaseDateB[2]));
+//			
+//			return dateA.compareTo(dateB);
 		}
+		
+		
+//		public int compare(PersonCredit creditA, PersonCredit creditB) {
+//			String[] releaseDateA = creditA.getReleaseDate().split("-");
+//			String[] releaseDateB = creditB.getReleaseDate().split("-");
+//			
+//			if(Integer.parseInt(releaseDateA[0]) > Integer.parseInt(releaseDateB[0])){
+//				return 1;
+//			}
+//			else if(Integer.parseInt(releaseDateA[0]) == Integer.parseInt(releaseDateB[0])){
+//				if(Integer.parseInt(releaseDateA[1]) > Integer.parseInt(releaseDateB[1])){
+//					return 1;
+//				}
+//				else if(Integer.parseInt(releaseDateA[1]) == Integer.parseInt(releaseDateB[1])){
+//					if(Integer.parseInt(releaseDateA[2]) > Integer.parseInt(releaseDateB[2])){
+//						return 1;
+//					}
+//					else if(Integer.parseInt(releaseDateA[2]) == Integer.parseInt(releaseDateB[2])){
+//						return 0;
+//					}
+//				}
+//			}
+//			return -1;
+//		}
 	}
 	
 }
