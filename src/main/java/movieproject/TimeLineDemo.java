@@ -128,9 +128,7 @@ public class TimeLineDemo extends Application {
 			
 			/** loop across person's credits and print them */
 
-			//PersonCredit t = credits.getCast().get(0);
-			//Image cover = new Image ("https://image.tmdb.org/t/p/original/" + t.getPosterPath(), 240, 360, false, false);
-			//resultsPane.getChildren().add(new ImageView(cover));
+			
 			for (PersonCredit c:credits.getCast()) {
 				Image cover = new Image ("https://image.tmdb.org/t/p/original/" + c.getPosterPath(), 240, 360, false, false);
 				resultsPane.getChildren()
