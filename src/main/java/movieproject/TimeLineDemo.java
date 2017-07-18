@@ -19,10 +19,13 @@ import info.movito.themoviedbapi.model.people.Person;
 import info.movito.themoviedbapi.model.people.PersonCredit;
 import info.movito.themoviedbapi.model.people.PersonCredits;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -38,13 +41,6 @@ import javafx.stage.Stage;
  *
  */
 public class TimeLineDemo extends Application {
-
-
-	/** static API. */
-	private static TmdbApi tmdbApi;
-	
-	/** static sessionToken. */
-	private static SessionToken sessionToken;
 	
 	private TmdbMovies movies;
 	
@@ -60,7 +56,7 @@ public class TimeLineDemo extends Application {
 	
 	/** list of movie credits without release dates. */
 	private LinkedList<PersonCredit> datelessCredits;
-	
+
 	/** Pane to store results. */
 	@FXML private VBox resultsPane;
 	
@@ -73,8 +69,11 @@ public class TimeLineDemo extends Application {
 	/** VBox to list search results (movies or actors). */
 	@FXML private VBox contentPane;
 	
-	/** Another Vbox to use with other features later. */
+	/** Another VBox to use with other features later. */
 	@FXML private VBox contentPane2;
+	
+	TmdbApi tmdbApi;
+	SessionToken sessionToken;
 
 	/**
 	 * when this method is called, JavaFX instantiates 
@@ -82,6 +81,8 @@ public class TimeLineDemo extends Application {
 	 */
 	public void initialize() {
 		
+		tmdbApi = new TmdbApi("1ff803482bfef0b19c8614ac392775e8");
+		sessionToken = getSessionToken();
 		
 		tmdbSearch = tmdbApi.getSearch();
 		
@@ -91,6 +92,9 @@ public class TimeLineDemo extends Application {
 		
 		
 		searchButton.setOnAction(new SearchHandler());
+		
+		resultsPane.setPadding(new Insets(20));
+		resultsPane.setSpacing(10);
 
 		contentPane.getChildren()
 			.add(new Label("Stuff can go here."));
@@ -132,19 +136,30 @@ public class TimeLineDemo extends Application {
 	 */
 	private void demoSearchFeatures(final String str) {
 
+		/** clear the pane **/
+		resultsPane.getChildren().clear();
+		
 		/** first, find the people. */
 		PersonResultsPage results = tmdbSearch
 				.searchPerson(str, true, 0);
 		
 		/** Iterator to access results */
 		Iterator<Person> iterator = results.iterator();
+
 		NumberFormat formatter = NumberFormat.getCurrencyInstance();
-		while (iterator.hasNext()) {
+
+		
+		
+
+
+		while(iterator.hasNext()) {
 			
 			Person actor = iterator.next();
 			
+			/** get the person's name */
 			Label nameLabel = new Label(actor.getName());
-		
+			
+
 			/** get the person's film credits */
 			PersonCredits credits = tmdbPeople
 					.getPersonCredits(actor.getId());
@@ -153,103 +168,53 @@ public class TimeLineDemo extends Application {
 			resultsPane.getChildren().add(nameLabel);
 			for (PersonCredit c: career.getCast()){
 				
-				Image cover = new Image ("https://image.tmdb.org/t/p/original/" + c.getPosterPath(), 540, 800, false, false);
-				String next = c.getMovieTitle() + " " + c.getReleaseDate() + " $";
+				Image cover = new Image ("https://image.tmdb.org/t/p/original/" + c.getPosterPath(), 
+						240, 
+						360, 
+						false, 
+						false);
+				String next = c.getMovieTitle() + " " + c.getReleaseDate() + " ";
 				next += formatter.format(career.getRevenue(c));
 				
 				resultsPane.getChildren().addAll(new Label(next), new ImageView(cover));
 			}
+
+			
+			
+			
+			// add movies without known release dates at beginning of list
+			
+			// add rest of movies
+			for (PersonCredit c:datedCredits){
+				Image cover = new Image("https://image.tmdb.org/t/p/original/" + c.getPosterPath(),
+						240, 
+						360, 
+						false, 
+						false);
+				
+				resultsPane.getChildren().addAll(new Label(c.getMovieTitle() + " - " + c.getReleaseDate() + "\n\n"),
+						new ImageView(cover));
 			}
-						
 		}
+	}
 			
-//			datedCredits = new LinkedList<PersonCredit>();
-//			
-//			datelessCredits = new LinkedList<PersonCredit>();
-//			
-//			dateComparator = new DateComparator();
-//
-//			Person person = iterator.next();
-//
-//			/** get the person's name */
-//			Label nameLabel = new Label(person.getName());
-//			
-//			/** get the person's film credits */
-//			PersonCredits credits = tmdbPeople
-//					.getPersonCredits(person.getId());
-//			
-//			/** print name to results */
-//			resultsPane.getChildren().addAll(nameLabel);
-//			
-//
-//			/** loop across person's credits and print them */
-//
-//			
-////			for (PersonCredit c:credits.getCast()) {
-////				Image cover = new Image ("https://image.tmdb.org/t/p/original/" + c.getPosterPath(), 240, 360, false, false);
-////				resultsPane.getChildren()
-////					.addAll(new ImageView(cover));
-//
-//			/** loop across person's credits and adds them to lists*/
-//
-//			for (PersonCredit c:credits.getCast()){
-//				// adds credit to dated credit list if it has one
-//				if (c.getReleaseDate() != null) {
-//					datedCredits.add(c);
-//				}
-//				// adds credit to undated credit list if returns null
-//				else {
-//					datelessCredits.add(c);
-//				}
+	
 
 		
-			
-//			// sorts credits with release date by date
-//			Collections.sort(datedCredits, dateComparator);
-//			
-//			// add movies without known release dates at beginning of list
-//			for (PersonCredit c:datelessCredits){
-//				Image cover = new Image ("https://image.tmdb.org/t/p/original/" + c.getPosterPath(), 540, 800, false, false);
-//				resultsPane.getChildren().addAll(new ImageView(cover), new Label(c.getMovieTitle()), new Label("Release Date Unknown\n\n"));
-//			}
-//			
-//			// add rest of movies
-//			for (PersonCredit c:datedCredits){
-//				Image cover = new Image ("https://image.tmdb.org/t/p/original/" + c.getPosterPath(), 540, 800, false, false);
-//				resultsPane.getChildren().addAll(new ImageView(cover), new Label(c.getMovieTitle()), new Label(c.getReleaseDate() + "\n\n"));
-//			}
-		
-	
-	
-	
-	/**
-	 * A private inner EventHandler for the search button.
-	 * @author Pieter Holleman
-	 *
-	 */
-	private class SearchHandler implements EventHandler<ActionEvent> {
+	private class SearchHandler implements EventHandler {
 
-		/**
-		 * Event handler to trigger search.
-		 * @param event triggers search
-		 */
-		public void handle(final ActionEvent event) {
-		
+		public void handle(Event event) {
 			demoSearchFeatures(searchBox.getText());
 			
-			
 		}
 		
-	};
+	}
 
 	/**
 	 * Main method launches the Application.
 	 * @param args
 	 */
 	public static void main(String[] args) {
-
-		tmdbApi = new TmdbApi("1ff803482bfef0b19c8614ac392775e8");
-		sessionToken = getSessionToken();
 		
 		launch(args);
 
@@ -266,6 +231,8 @@ public class TimeLineDemo extends Application {
 		return sessionToken;
 	}
 	
-	
-}
+	}
 
+	
+
+	
