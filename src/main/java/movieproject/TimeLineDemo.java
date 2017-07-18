@@ -1,5 +1,6 @@
 package movieproject;
 
+import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Collections;
@@ -9,6 +10,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import info.movito.themoviedbapi.TmdbApi;
+import info.movito.themoviedbapi.TmdbMovies;
 import info.movito.themoviedbapi.TmdbPeople;
 import info.movito.themoviedbapi.TmdbPeople.PersonResultsPage;
 import info.movito.themoviedbapi.TmdbSearch;
@@ -44,6 +46,8 @@ public class TimeLineDemo extends Application {
 	/** static sessionToken. */
 	private static SessionToken sessionToken;
 	
+	private TmdbMovies movies;
+	
 
 	/** might run faster if these are here. */
 	private TmdbSearch tmdbSearch; 
@@ -56,11 +60,6 @@ public class TimeLineDemo extends Application {
 	
 	/** list of movie credits without release dates. */
 	private LinkedList<PersonCredit> datelessCredits;
-
-
-	/** custom comparator for comparing movie release dates */
-	DateComparator dateComparator;
-	
 	
 	/** Pane to store results. */
 	@FXML private VBox resultsPane;
@@ -83,13 +82,13 @@ public class TimeLineDemo extends Application {
 	 */
 	public void initialize() {
 		
-		TmdbApi tmdbApi = new TmdbApi("1ff803482bfef0b19c8614ac392775e8");
-		
-		SessionToken sessionToken = getSessionToken();
 		
 		tmdbSearch = tmdbApi.getSearch();
 		
 		tmdbPeople = tmdbApi.getPeople();
+		
+		movies = tmdbApi.getMovies();
+		
 		
 		searchButton.setOnAction(new SearchHandler());
 
@@ -124,7 +123,7 @@ public class TimeLineDemo extends Application {
 		
 		datelessCredits = new LinkedList<PersonCredit>();
 		
-		dateComparator = new DateComparator();
+	
 	}
 
 	/**
@@ -139,66 +138,88 @@ public class TimeLineDemo extends Application {
 		
 		/** Iterator to access results */
 		Iterator<Person> iterator = results.iterator();
-
+		NumberFormat formatter = NumberFormat.getCurrencyInstance();
 		while (iterator.hasNext()) {
 			
-			datedCredits = new LinkedList<PersonCredit>();
+			Person actor = iterator.next();
 			
-			datelessCredits = new LinkedList<PersonCredit>();
-			
-			dateComparator = new DateComparator();
-
-			Person person = iterator.next();
-
-			/** get the person's name */
-			Label nameLabel = new Label(person.getName());
-			
+			Label nameLabel = new Label(actor.getName());
+		
 			/** get the person's film credits */
 			PersonCredits credits = tmdbPeople
-					.getPersonCredits(person.getId());
-			
-			/** print name to results */
-			resultsPane.getChildren().addAll(nameLabel);
-			
-
-			/** loop across person's credits and print them */
-
-			
-//			for (PersonCredit c:credits.getCast()) {
-//				Image cover = new Image ("https://image.tmdb.org/t/p/original/" + c.getPosterPath(), 240, 360, false, false);
-//				resultsPane.getChildren()
-//					.addAll(new ImageView(cover));
-
-			/** loop across person's credits and adds them to lists*/
-
-			for (PersonCredit c:credits.getCast()){
-				// adds credit to dated credit list if it has one
-				if (c.getReleaseDate() != null) {
-					datedCredits.add(c);
-				}
-				// adds credit to undated credit list if returns null
-				else {
-					datelessCredits.add(c);
-				}
-
-			}
-			
-			// sorts credits with release date by date
-			Collections.sort(datedCredits, dateComparator);
-			
-			// add movies without known release dates at beginning of list
-			for (PersonCredit c:datelessCredits){
+					.getPersonCredits(actor.getId());
+		
+			ActorTimeLine career = new ActorTimeLine(credits, movies);
+			resultsPane.getChildren().add(nameLabel);
+			for (PersonCredit c: career.getCast()){
+				
 				Image cover = new Image ("https://image.tmdb.org/t/p/original/" + c.getPosterPath(), 540, 800, false, false);
-				resultsPane.getChildren().addAll(new ImageView(cover), new Label(c.getMovieTitle()), new Label("Release Date Unknown\n\n"));
+				String next = c.getMovieTitle() + " " + c.getReleaseDate() + " $";
+				next += formatter.format(career.getRevenue(c));
+				
+				resultsPane.getChildren().addAll(new Label(next), new ImageView(cover));
 			}
-			
-			// add rest of movies
-			for (PersonCredit c:datedCredits){
-				Image cover = new Image ("https://image.tmdb.org/t/p/original/" + c.getPosterPath(), 540, 800, false, false);
-				resultsPane.getChildren().addAll(new ImageView(cover), new Label(c.getMovieTitle()), new Label(c.getReleaseDate() + "\n\n"));
 			}
+						
 		}
-	}
+			
+//			datedCredits = new LinkedList<PersonCredit>();
+//			
+//			datelessCredits = new LinkedList<PersonCredit>();
+//			
+//			dateComparator = new DateComparator();
+//
+//			Person person = iterator.next();
+//
+//			/** get the person's name */
+//			Label nameLabel = new Label(person.getName());
+//			
+//			/** get the person's film credits */
+//			PersonCredits credits = tmdbPeople
+//					.getPersonCredits(person.getId());
+//			
+//			/** print name to results */
+//			resultsPane.getChildren().addAll(nameLabel);
+//			
+//
+//			/** loop across person's credits and print them */
+//
+//			
+////			for (PersonCredit c:credits.getCast()) {
+////				Image cover = new Image ("https://image.tmdb.org/t/p/original/" + c.getPosterPath(), 240, 360, false, false);
+////				resultsPane.getChildren()
+////					.addAll(new ImageView(cover));
+//
+//			/** loop across person's credits and adds them to lists*/
+//
+//			for (PersonCredit c:credits.getCast()){
+//				// adds credit to dated credit list if it has one
+//				if (c.getReleaseDate() != null) {
+//					datedCredits.add(c);
+//				}
+//				// adds credit to undated credit list if returns null
+//				else {
+//					datelessCredits.add(c);
+//				}
+
+		
+			
+//			// sorts credits with release date by date
+//			Collections.sort(datedCredits, dateComparator);
+//			
+//			// add movies without known release dates at beginning of list
+//			for (PersonCredit c:datelessCredits){
+//				Image cover = new Image ("https://image.tmdb.org/t/p/original/" + c.getPosterPath(), 540, 800, false, false);
+//				resultsPane.getChildren().addAll(new ImageView(cover), new Label(c.getMovieTitle()), new Label("Release Date Unknown\n\n"));
+//			}
+//			
+//			// add rest of movies
+//			for (PersonCredit c:datedCredits){
+//				Image cover = new Image ("https://image.tmdb.org/t/p/original/" + c.getPosterPath(), 540, 800, false, false);
+//				resultsPane.getChildren().addAll(new ImageView(cover), new Label(c.getMovieTitle()), new Label(c.getReleaseDate() + "\n\n"));
+//			}
+		
+	
 	
 	
 	/**
@@ -219,7 +240,7 @@ public class TimeLineDemo extends Application {
 			
 		}
 		
-	}
+	};
 
 	/**
 	 * Main method launches the Application.
@@ -227,8 +248,8 @@ public class TimeLineDemo extends Application {
 	 */
 	public static void main(String[] args) {
 
-		TmdbApi tmdbApi = new TmdbApi("1ff803482bfef0b19c8614ac392775e8");
-		SessionToken sessionToken = getSessionToken();
+		tmdbApi = new TmdbApi("1ff803482bfef0b19c8614ac392775e8");
+		sessionToken = getSessionToken();
 		
 		launch(args);
 
@@ -244,68 +265,7 @@ public class TimeLineDemo extends Application {
 	
 		return sessionToken;
 	}
-
-	public void sortCreditList(LinkedList<PersonCredit> creditList){
-		DateComparator dateComparator = new DateComparator();
-		Collections.sort(creditList, dateComparator);
-	}
 	
-	public class DateComparator implements Comparator<PersonCredit>{
-
-		public int compare(PersonCredit A, PersonCredit B){
-			
-			String[] releaseDateA = A.getReleaseDate().split("-");
-			String[] releaseDateB = B.getReleaseDate().split("-");
-			
-			LocalDate one = LocalDate.of(Integer.parseInt(releaseDateA[0]), 
-					Integer.parseInt(releaseDateA[1]), 
-					Integer.parseInt(releaseDateA[2]));
-			
-			LocalDate two = LocalDate.of(Integer.parseInt(releaseDateB[0]), 
-					Integer.parseInt(releaseDateB[1]), 
-					Integer.parseInt(releaseDateB[2]));
-			
-			if (one.isAfter(two))return 1;
-			else if (one.isEqual(two))return 0;
-			else return -1;
-			
-//			Calendar dateA = Calendar.getInstance();
-//			dateA.set(Integer.parseInt(releaseDateA[0]), 
-//					Integer.parseInt(releaseDateA[1]), 
-//					Integer.parseInt(releaseDateA[2]));
-//			
-//			Calendar dateB = Calendar.getInstance();
-//			dateA.set(Integer.parseInt(releaseDateB[0]), 
-//					Integer.parseInt(releaseDateB[1]), 
-//					Integer.parseInt(releaseDateB[2]));
-//			
-//			return dateA.compareTo(dateB);
-		}
-		
-		
-//		public int compare(PersonCredit creditA, PersonCredit creditB) {
-//			String[] releaseDateA = creditA.getReleaseDate().split("-");
-//			String[] releaseDateB = creditB.getReleaseDate().split("-");
-//			
-//			if(Integer.parseInt(releaseDateA[0]) > Integer.parseInt(releaseDateB[0])){
-//				return 1;
-//			}
-//			else if(Integer.parseInt(releaseDateA[0]) == Integer.parseInt(releaseDateB[0])){
-//				if(Integer.parseInt(releaseDateA[1]) > Integer.parseInt(releaseDateB[1])){
-//					return 1;
-//				}
-//				else if(Integer.parseInt(releaseDateA[1]) == Integer.parseInt(releaseDateB[1])){
-//					if(Integer.parseInt(releaseDateA[2]) > Integer.parseInt(releaseDateB[2])){
-//						return 1;
-//					}
-//					else if(Integer.parseInt(releaseDateA[2]) == Integer.parseInt(releaseDateB[2])){
-//						return 0;
-//					}
-//				}
-//			}
-//			return -1;
-//		}
-	}
 	
 }
 

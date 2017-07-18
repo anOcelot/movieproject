@@ -18,7 +18,10 @@
                <content>
                   <ScrollPane prefHeight="200.0" prefWidth="200.0" stylesheets="@projectStyle.css">
                      <content>
-                        <VBox fx:id="resultsPane" />
+                        <VBox fx:id="resultsPane">
+                           <opaqueInsets>
+                              <Insets />
+                           </opaqueInsets></VBox>
                      </content>
                   </ScrollPane>
                </content></Tab>
