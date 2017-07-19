@@ -100,7 +100,8 @@ public class TimeLineDemo extends Application {
 			.add(new Label("Stuff can go here."));
 		contentPane2.getChildren()
 			.add(new Label("Stuff can go here too."));
-
+		
+		
 	}
 	
 	/**
@@ -179,22 +180,6 @@ public class TimeLineDemo extends Application {
 				resultsPane.getChildren().addAll(new Label(next), new ImageView(cover));
 			}
 
-			
-			
-			
-			// add movies without known release dates at beginning of list
-			
-			// add rest of movies
-			for (PersonCredit c:datedCredits){
-				Image cover = new Image("https://image.tmdb.org/t/p/original/" + c.getPosterPath(),
-						240, 
-						360, 
-						false, 
-						false);
-				
-				resultsPane.getChildren().addAll(new Label(c.getMovieTitle() + " - " + c.getReleaseDate() + "\n\n"),
-						new ImageView(cover));
-			}
 		}
 	}
 			
@@ -224,7 +209,7 @@ public class TimeLineDemo extends Application {
 	 * Gets a session token.
 	 * @return - the session token
 	 */
-	private static SessionToken getSessionToken() {
+	static SessionToken getSessionToken() {
 		
 	SessionToken sessionToken = new SessionToken("sessionid generated above");
 	
