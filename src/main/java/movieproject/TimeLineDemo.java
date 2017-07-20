@@ -36,7 +36,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 /**
- * 
+ * Main class instantiates a gui which allows the users enter an actor's
+ * name, then uses this user input to generate an ActorTimeLine for that actor
+ * and present a visualization.
  * @author Pieter Holleman, Zachary Hern, Adam Slifco
  * @version 2
  * @since 7-7-2017
