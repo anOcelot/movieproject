@@ -37,7 +37,8 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 /**
  * 
- * @author Pieter Holleman
+ * @author Pieter Holleman, Zachary Hern, Adam Slifco
+ * @version 2
  *
  */
 public class TimeLineDemo extends Application {
@@ -185,7 +186,10 @@ public class TimeLineDemo extends Application {
 			
 	
 
-		
+	/**
+	 * 	Inner class for handling search button function
+	 * @author pieter holleman, Zachary Hern, Adam Slifco
+	 */
 	private class SearchHandler implements EventHandler {
 
 		public void handle(Event event) {
