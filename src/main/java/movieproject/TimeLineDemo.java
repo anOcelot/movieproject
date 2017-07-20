@@ -39,7 +39,7 @@ import javafx.stage.Stage;
  * 
  * @author Pieter Holleman, Zachary Hern, Adam Slifco
  * @version 2
- *
+ * @since 7-7-2017
  */
 public class TimeLineDemo extends Application {
 	
@@ -108,7 +108,8 @@ public class TimeLineDemo extends Application {
 	/**
 	 * Inner EventHandler class for search button.
 	 * @author Pieter Holleman
-	 *
+	 * @version 1
+	 * @since 7-7-2017
 	 */
 	
 	@Override
@@ -133,7 +134,8 @@ public class TimeLineDemo extends Application {
 	}
 
 	/**
-	 * currently testing this feature.
+	 * Searches for an actor and displays their film credits,
+	 * with posters and revenue info, to the gui.
 	 * @param str - passed to search method
 	 */
 	private void demoSearchFeatures(final String str) {
@@ -201,7 +203,7 @@ public class TimeLineDemo extends Application {
 
 	/**
 	 * Main method launches the Application.
-	 * @param args
+	 * @param args 
 	 */
 	public static void main(String[] args) {
 		
