@@ -8,6 +8,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
 import info.movito.themoviedbapi.TmdbApi;
 import info.movito.themoviedbapi.TmdbMovies;
@@ -33,8 +34,19 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.util.Duration;
+import javafx.animation.AnimationTimer;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 /**
  * Main class instantiates a gui which allows the users enter an actor's
  * name, then uses this user input to generate an ActorTimeLine for that actor
@@ -70,7 +82,7 @@ public class TimeLineDemo extends Application {
 	@FXML private TextField searchBox;
 	
 	/** VBox to list search results (movies or actors). */
-	@FXML private VBox contentPane;
+	@FXML private Pane contentPane;
 	
 	/** Another VBox to use with other features later. */
 	@FXML private VBox contentPane2;
@@ -134,6 +146,38 @@ public class TimeLineDemo extends Application {
 		
 	
 	}
+	
+	private void search(final String str) {
+		
+		/** clear the pane **/
+		resultsPane.getChildren().clear();
+		
+		/** first, find the people. */
+		PersonResultsPage results = tmdbSearch
+				.searchPerson(str, true, 0);
+		
+		/** Iterator to access results */
+		Iterator<Person> iterator = results.iterator();
+		
+		
+			
+			Person actor = iterator.next();
+			
+			/** get the person's name */
+			Label nameLabel = new Label(actor.getName());
+			
+			resultsPane.getChildren().add(nameLabel);
+			
+			/** get the person's film credits */
+			PersonCredits credits = tmdbPeople
+					.getPersonCredits(actor.getId());
+		
+			ActorTimeLine career = new ActorTimeLine(credits, movies);
+			
+			drawTimeline(career);
+		
+
+	}
 
 	/**
 	 * Searches for an actor and displays their film credits,
@@ -171,6 +215,7 @@ public class TimeLineDemo extends Application {
 					.getPersonCredits(actor.getId());
 		
 			ActorTimeLine career = new ActorTimeLine(credits, movies);
+			drawTimeline(career);
 			resultsPane.getChildren().add(nameLabel);
 			for (PersonCredit c: career.getCast()){
 				
@@ -197,8 +242,8 @@ public class TimeLineDemo extends Application {
 	private class SearchHandler implements EventHandler {
 
 		public void handle(Event event) {
-			demoSearchFeatures(searchBox.getText());
-			
+			//demoSearchFeatures(searchBox.getText());
+			search(searchBox.getText());
 		}
 		
 	}
@@ -212,6 +257,65 @@ public class TimeLineDemo extends Application {
 		launch(args);
 
 	}
+	
+	
+	
+	 public void drawTimeline(ActorTimeLine career){
+	    	
+	    	List<PersonCredit> roles = career.getCast();
+	    	int size = 0;
+	    	String date;
+	    	int i = 0;
+	    	
+	    	while (size == 0){
+	    		
+	    	try {
+	    		date = "2017";
+	    		size = Integer.parseInt(date);
+	    		date = roles.get(0).getReleaseDate().split("-")[0];
+	    		size -= Integer.parseInt(date);
+	    		size *= 100;
+	    		
+	    	} catch (Exception E) {
+	    		++i;
+	    	}
+	    	}
+	    	
+	    	 final Rectangle rectBasicTimeline = new Rectangle(0, 10, 0, 10);
+			 final Text text = new Text("test");
+		     rectBasicTimeline.setFill(Color.FORESTGREEN);
+		     final Timeline timeline = new Timeline();
+		     //timeline.setCycleCount(Timeline.INDEFINITE);
+		     //timeline.setAutoReverse(true);
+		     final KeyValue kv = new KeyValue(rectBasicTimeline.widthProperty(), size);
+		     final KeyFrame kf = new KeyFrame(Duration.millis(size), kv);
+		     timeline.getKeyFrames().add(kf);
+		     
+		     
+		     AnimationTimer timer;
+		     timer = new AnimationTimer() {
+		            @Override
+		            public void handle(long l) {
+		                text.setText(Double.toString(rectBasicTimeline.getWidth()));
+		                
+		            }
+		        };
+		        
+		     rectBasicTimeline.relocate(35, 400);
+		     text.relocate(35, 375);
+		     contentPane.getChildren().clear();
+		     contentPane.getChildren().add(text);
+		     contentPane.getChildren().add(rectBasicTimeline);
+		    
+		     
+		     
+
+		      
+		 
+		     timeline.play();
+		     timer.start();
+		     
+	    }
 
 	/**
 	 * Gets a session token.

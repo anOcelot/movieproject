@@ -8,9 +8,10 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="movieproject.TimeLineDemo">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="614.0" prefWidth="821.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="movieproject.TimeLineDemo">
    <center>
       <TabPane prefHeight="200.0" prefWidth="200.0" stylesheets="@projectStyle.css" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
         <tabs>
@@ -29,7 +30,7 @@
                <content>
                   <ScrollPane prefHeight="200.0" prefWidth="200.0">
                      <content>
-                        <VBox fx:id="contentPane" />
+                        <Pane fx:id="contentPane" />
                      </content>
                   </ScrollPane>
                </content>
@@ -50,7 +51,7 @@
       <HBox prefHeight="37.0" prefWidth="598.0" spacing="5.0" BorderPane.alignment="CENTER">
          <children>
             <Button fx:id="searchButton" mnemonicParsing="false" prefHeight="40.0" prefWidth="134.0" text="Search" />
-            <TextField fx:id="searchBox" prefHeight="29.0" prefWidth="447.0" />
+            <TextField fx:id="searchBox" HBox.hgrow="ALWAYS" />
          </children>
          <BorderPane.margin>
             <Insets />

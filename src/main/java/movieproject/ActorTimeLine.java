@@ -37,9 +37,6 @@ public class ActorTimeLine implements Comparator<PersonCredit> {
 	/** the Tmdb database-sourced PersonCredits object */
 	private PersonCredits credits;
 	
-	/** cast credits  */
-	private ArrayList<PersonCredit> cast;
-	
 	/**
 	 * Constructor uses credits and tmdb movies object to create a PersonCredits
 	 * wrapper that uses the movies object to allow accessing additional info.
@@ -50,9 +47,7 @@ public class ActorTimeLine implements Comparator<PersonCredit> {
 		
 		this.movies = movies;
 		this.credits = credits;
-		
-		
-		
+	
 	}
 	
 
@@ -67,6 +62,7 @@ public class ActorTimeLine implements Comparator<PersonCredit> {
 		cast.sort(this);
 		return cast;
 	}
+
 	
 	/**
 	 * uses the TmdbMovies object to get the revenue of the film in

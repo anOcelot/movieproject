@@ -3,6 +3,7 @@ package movieproject;
 import static org.junit.Assert.*;
 
 import java.util.Iterator;
+import java.util.List;
 
 import static org.hamcrest.CoreMatchers.*;
 
@@ -26,6 +27,7 @@ public class ActorTimeLineTest extends TestCase {
 	private TmdbSearch search;
 	private TmdbMovies movies;
 	private TmdbPeople people;
+	private PersonResultsPage results;
 	
 	
 
@@ -40,6 +42,7 @@ public class ActorTimeLineTest extends TestCase {
 		search = tmdbApi.getSearch();
 		people = tmdbApi.getPeople();
 		movies = tmdbApi.getMovies();	
+		results = search.searchPerson("Adam Sandler", true, 0);
 		
 
 		
@@ -50,8 +53,6 @@ public class ActorTimeLineTest extends TestCase {
 		
 		testResources();
 	
-		/** first, find the people. */
-		PersonResultsPage results = search.searchPerson("Adam Sandler", true, 0);
 		
 		/** Iterator to access results */
 		Iterator<Person> iterator = results.iterator();
@@ -70,8 +71,23 @@ public class ActorTimeLineTest extends TestCase {
 		}
 
 		
-//	
-//	}
+	@Test 
+	public void testComparator(){
+		
+		testResources();
+		Iterator<Person> iterator = results.iterator();
+		Person actor = iterator.next();
+		PersonCredits credits = people.getPersonCredits(actor.getId());
+		ActorTimeLine career = new ActorTimeLine(credits, movies);
+		
+		List<PersonCredit> c = career.getCast();
+		
+			
+		Assert.assertEquals(career.compare(c.get(0), c.get(10)), -1);
+		Assert.assertEquals(career.compare(c.get(10), c.get(5)), 1);
+		Assert.assertEquals(career.compare(c.get(15), c.get(15)), 0);
+		
+	}
 	
 	@Test
 	public void testGui() {
