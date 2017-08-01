@@ -17,16 +17,24 @@
 
 .tab:selected {
     -fx-background-color:#c6ebc6;
+   
     -fx-background-insets: 0 0 0 0, 0, 0;
 }
-
-
-
 
 
 .tab-header-area {
     -fx-background-color:#c6ebc6;
    
+}
+
+.summary-box {
+    -fx-background-color:#dedede;
+    -fx-border-style: solid;
+    -fx-border-color: #56b256;
+    -fx-border-width: 3px;
+    -fx-border-radius: 5, 5, 5, 5;
+    -fx-padding: 10, 10, 10, 10;
+    -fx-background-radius: 5;
 }
 
 .scroll-pane {

@@ -1,7 +1,9 @@
 package movieproject;
 
+import java.io.IOException;
 import java.text.NumberFormat;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
@@ -15,6 +17,7 @@ import info.movito.themoviedbapi.TmdbMovies;
 import info.movito.themoviedbapi.TmdbPeople;
 import info.movito.themoviedbapi.TmdbPeople.PersonResultsPage;
 import info.movito.themoviedbapi.TmdbSearch;
+import info.movito.themoviedbapi.model.Artwork;
 import info.movito.themoviedbapi.model.core.SessionToken;
 import info.movito.themoviedbapi.model.people.Person;
 import info.movito.themoviedbapi.model.people.PersonCredit;
@@ -30,17 +33,22 @@ import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.animation.AnimationTimer;
@@ -86,6 +94,10 @@ public class TimeLineDemo extends Application {
 	
 	/** Another VBox to use with other features later. */
 	@FXML private VBox contentPane2;
+	
+	private Person actor;
+	
+	
 	
 	TmdbApi tmdbApi;
 	SessionToken sessionToken;
@@ -136,7 +148,7 @@ public class TimeLineDemo extends Application {
 	    /** loaders gonna load */
 		Scene scene = new Scene((Parent) loader.load());
 
-		stage.setTitle("Scene title");
+		stage.setTitle("Actor Timeline");
 		stage.setScene(scene);
 		stage.show();
 		
@@ -147,6 +159,10 @@ public class TimeLineDemo extends Application {
 	
 	}
 	
+	/**
+	 * Basic Search Method
+	 * @param str The name of the actor to search for
+	 */
 	private void search(final String str) {
 		
 		/** clear the pane **/
@@ -161,23 +177,113 @@ public class TimeLineDemo extends Application {
 		
 		
 			
-			Person actor = iterator.next();
+			actor = iterator.next();
 			
 			/** get the person's name */
 			Label nameLabel = new Label(actor.getName());
 			
-			resultsPane.getChildren().add(nameLabel);
+			TextFlow flow = new TextFlow(new Hyperlink(actor.getName()));
 			
 			/** get the person's film credits */
 			PersonCredits credits = tmdbPeople
 					.getPersonCredits(actor.getId());
+			
 		
+			 
+			
+			List<Artwork> images = tmdbPeople.getPersonImages(actor.getId());
+			String picPath = images.get(0).getFilePath();
+			Image pic = new Image ("https://image.tmdb.org/t/p/original/" + picPath, 
+					240, 
+					360, 
+					false, 
+					false);
 			ActorTimeLine career = new ActorTimeLine(credits, movies);
 			
-			drawTimeline(career);
+			ImageView picView = new ImageView(pic);
+			FXMLLoader loader = new FXMLLoader(this.getClass()
+					.getResource("/SummaryBox.fxml"));
+			
+			//drawTimeline(career);
+			
+		    VBox summaryBox = new SummaryBox();
+			
+			
+		    
+		  
+			
+			try {
+				summaryBox = loader.load();
+				summaryBox.getChildren().add(flow);
+				summaryBox.getChildren().add(picView);
+				
+				resultsPane.getChildren().add(summaryBox);
+			} catch (IOException e) {
+				
+				e.printStackTrace();
+			}
+			
+			displayCredits(actor);
+			
+		
+	}
+	
+//	private class DisplayHandler implements EventHandler {
+//		
+//		private void handle(Event event){
+//			displayCredits(actor);
+//		}
+//	}
+	private void displayCredits(Person actor) {
+		
+		PersonCredits credits = tmdbPeople
+				.getPersonCredits(actor.getId());
+		
+	
+		/** clear the pane **/
+		resultsPane.getChildren().clear();
+		
 		
 
+		NumberFormat formatter = NumberFormat.getCurrencyInstance();
+
+		
+		ActorTimeLine career = new ActorTimeLine(credits, movies);
+		
+//		FXMLLoader loader = new FXMLLoader(this.getClass()
+//				.getResource("/SummaryBox.fxml"));
+//	
+		
+		
+		
+	
+			
+		
+
+		
+		
+		
+		for (PersonCredit c: career.getCast()){
+			
+			SummaryBoxV2 box = new SummaryBoxV2();
+			Image cover = new Image ("https://image.tmdb.org/t/p/original/" + c.getPosterPath(), 
+					240, 
+					360, 
+					false, 
+					false);
+			String next = c.getMovieTitle() + " " + c.getReleaseDate() + " ";
+			String revenue = formatter.format(career.getRevenue(c));
+			Label titleLabel = new Label(next);
+			Label revenueLabel = new Label(revenue);
+			box.add(titleLabel);
+			box.add(new ImageView(cover));
+			box.add(revenueLabel);
+			resultsPane.getChildren().addAll(box.getBox());
+		}
+		
+		
 	}
+	
 
 	/**
 	 * Searches for an actor and displays their film credits,
@@ -209,7 +315,7 @@ public class TimeLineDemo extends Application {
 			/** get the person's name */
 			Label nameLabel = new Label(actor.getName());
 			
-
+			
 			/** get the person's film credits */
 			PersonCredits credits = tmdbPeople
 					.getPersonCredits(actor.getId());
@@ -244,9 +350,13 @@ public class TimeLineDemo extends Application {
 		public void handle(Event event) {
 			//demoSearchFeatures(searchBox.getText());
 			search(searchBox.getText());
+			
+			resultsPane.getChildren().add(new SummaryBox());
 		}
 		
 	}
+	
+	
 
 	/**
 	 * Main method launches the Application.
@@ -303,6 +413,7 @@ public class TimeLineDemo extends Application {
 		        
 		     rectBasicTimeline.relocate(35, 400);
 		     text.relocate(35, 375);
+		     
 		     contentPane.getChildren().clear();
 		     contentPane.getChildren().add(text);
 		     contentPane.getChildren().add(rectBasicTimeline);
