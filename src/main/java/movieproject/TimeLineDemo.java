@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 import info.movito.themoviedbapi.TmdbApi;
 import info.movito.themoviedbapi.TmdbMovies;
@@ -35,6 +36,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextField;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
@@ -245,10 +247,10 @@ public class TimeLineDemo extends Application {
 		
 		
 
-		NumberFormat formatter = NumberFormat.getCurrencyInstance();
+		final NumberFormat formatter = NumberFormat.getCurrencyInstance();
 
 		
-		ActorTimeLine career = new ActorTimeLine(credits, movies);
+		final ActorTimeLine career = new ActorTimeLine(credits, movies);
 		
 //		FXMLLoader loader = new FXMLLoader(this.getClass()
 //				.getResource("/SummaryBox.fxml"));
@@ -263,23 +265,52 @@ public class TimeLineDemo extends Application {
 		
 		
 		
-		for (PersonCredit c: career.getCast()){
+		
+			/******************************stolecode for testing*********************/
+			//final ProgressIndicator pi = new ProgressIndicator(0);
+            //root.getChildren().add(pi);
+        	
+
+            // separate non-FX thread
+            new Thread() {
+                // runnable for that thread
+                public void run() {
+                	for (final PersonCredit c: career.getCast()){
+                		final SummaryBoxV2 box = new SummaryBoxV2();
+        			Image cover = new Image ("https://image.tmdb.org/t/p/original/" + c.getPosterPath(), 
+        					240, 
+        					360, 
+        					false, 
+        					false);
+        			String next = c.getMovieTitle() + " " + c.getReleaseDate() + " ";
+        			String revenue = formatter.format(career.getRevenue(c));
+        			Label titleLabel = new Label(next);
+        			Label revenueLabel = new Label(revenue);
+        			box.add(titleLabel);
+        			box.add(new ImageView(cover));
+        			box.add(revenueLabel);
+                    //for (int i = 0; i < 20; i++) {
+                       // try {
+                            // imitating work
+                         //   Thread.sleep(new Random().nextInt(1000));
+                        //} catch (InterruptedException ex) {
+                          //  ex.printStackTrace();
+                        //}
+                       // final double progress = i*0.05;
+                        // update ProgressIndicator on FX thread
+                        Platform.runLater(new Runnable() {
+
+                            public void run() {
+                            	resultsPane.getChildren().addAll(box.getBox());
+                            }
+                        });
+                    }
+                }
+            }.start();
+			/******************************stolecode for testing*********************/
 			
-			SummaryBoxV2 box = new SummaryBoxV2();
-			Image cover = new Image ("https://image.tmdb.org/t/p/original/" + c.getPosterPath(), 
-					240, 
-					360, 
-					false, 
-					false);
-			String next = c.getMovieTitle() + " " + c.getReleaseDate() + " ";
-			String revenue = formatter.format(career.getRevenue(c));
-			Label titleLabel = new Label(next);
-			Label revenueLabel = new Label(revenue);
-			box.add(titleLabel);
-			box.add(new ImageView(cover));
-			box.add(revenueLabel);
-			resultsPane.getChildren().addAll(box.getBox());
-		}
+
+			
 		
 		
 	}

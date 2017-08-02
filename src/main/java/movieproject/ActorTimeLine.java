@@ -34,7 +34,7 @@ public class ActorTimeLine implements Comparator<PersonCredit> {
 	 */
 	private TmdbMovies movies;
 	
-	/** the Tmdb database-sourced PersonCredits object */
+	/** the Tmdb database-sourced PersonCredits object. */
 	private PersonCredits credits;
 	
 	/**
