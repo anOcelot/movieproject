@@ -182,8 +182,16 @@ public class TimeLineDemo extends Application {
 			/** get the person's name */
 			Label nameLabel = new Label(actor.getName());
 			
-			TextFlow flow = new TextFlow(new Hyperlink(actor.getName()));
 			
+			Hyperlink link = new Hyperlink(actor.getName());
+			link.setOnAction(new EventHandler(){
+				public void handle(Event e)
+				{
+					displayCredits(actor);
+					};
+				});
+			
+			TextFlow flow = new TextFlow(link);
 			/** get the person's film credits */
 			PersonCredits credits = tmdbPeople
 					.getPersonCredits(actor.getId());
@@ -208,6 +216,7 @@ public class TimeLineDemo extends Application {
 			
 		    VBox summaryBox = new SummaryBox();
 			
+		    
 			
 		    
 		  
@@ -223,7 +232,8 @@ public class TimeLineDemo extends Application {
 				e.printStackTrace();
 			}
 			
-			displayCredits(actor);
+			
+			//displayCredits(actor);
 			
 		
 	}
