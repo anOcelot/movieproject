@@ -40,6 +40,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
@@ -191,7 +192,11 @@ public class TimeLineDemo extends Application {
 		
 			Platform.runLater(new Runnable(){
 				public void run() {
-					chart.setMinSize(creditsPane.getWidth(), creditsPane.getHeight());
+					
+					
+					creditsPane.setFillWidth(true);
+					chart.setPrefSize(creditsPane.getMaxWidth(), creditsPane.getMaxHeight());
+					//creditsPane.setFillHeight(true);
 					creditsPane.getChildren().add(chart);
 				}
 			});
