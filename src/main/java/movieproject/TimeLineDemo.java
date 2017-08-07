@@ -33,6 +33,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
@@ -83,6 +84,8 @@ public class TimeLineDemo extends Application {
 	
 	/** Currently selected actor **/
 	private Person actor;
+	
+	XYChart.Series currentSeries;
 	
 	
 	TmdbApi tmdbApi;
@@ -148,7 +151,7 @@ public class TimeLineDemo extends Application {
 	 */
 	private void search(final String str) {
 		
-		drawChart();
+		
 		
 		/** clear any previous results pane **/
 		resultsPane.getChildren().clear();
@@ -182,9 +185,11 @@ public class TimeLineDemo extends Application {
 			
 			PersonCredits credits = tmdbPeople
 					.getPersonCredits(actor.getId());
+			ActorTimeLine sortedCredits = new ActorTimeLine(credits, movies);
+			for (PersonCredit c: sortedCredits.getCast()){
 			
-			for (PersonCredit c: credits.getCast()){
-				
+			
+			
 			final VBox newBox = drawFilmBox(c);
 			
 			Platform.runLater(new Runnable() {
@@ -246,7 +251,7 @@ public class TimeLineDemo extends Application {
 			actor = p;
 			CreditTask creditThread = new CreditTask();
 			creditThread.start();
-			//drawChart();
+			drawChart();
 		}
 		
 		
@@ -300,6 +305,8 @@ public class TimeLineDemo extends Application {
 		newBox.getChildren().addAll(new ImageView(cover));
 		newBox.getChildren().addAll(revenueLabel);
 		
+		
+		
 		return newBox;
 		
 	}
@@ -342,30 +349,52 @@ public class TimeLineDemo extends Application {
 	}
 	
 	private void drawChart(){
-		 final NumberAxis xAxis = new NumberAxis();
-	        final NumberAxis yAxis = new NumberAxis();
-	        xAxis.setLabel("Number of Month");
+		 final NumberAxis yAxis = new NumberAxis();
+	        //final NumberAxis xAxis = new StringAxis("Year", 1900, 2017, 1);
+	      
+	        final CategoryAxis xAxis2 = new CategoryAxis();
 	        //creating the chart
-	        final LineChart<Number,Number> lineChart = 
-	                new LineChart<Number,Number>(xAxis,yAxis);
+	        final LineChart<String,Number> lineChart = 
+	                new LineChart<String,Number>(xAxis2,yAxis);
+	        lineChart.setTitle("Career of " + actor.getName());
+	        
+	        PersonCredits credits = tmdbPeople
+					.getPersonCredits(actor.getId());
+			ActorTimeLine sortedCredits = new ActorTimeLine(credits, movies);
+			XYChart.Series series = new XYChart.Series();
+			series.setName("Career Earnings");
+			for (PersonCredit c: sortedCredits.getCast()){
 	                
-	        lineChart.setTitle("Stock Monitoring, 2010");
+	        
+			final long revenue = movies.getMovie(c.getId(), "english").getRevenue();
+			String[] releaseDate = c.getReleaseDate().split("-");
+			final int date;
+//			final int year = Integer.parseInt(releaseDate[2]);
+			if (releaseDate.length == 3) {
+				
+				XYChart.Data nextData = new XYChart.Data(releaseDate[0], revenue);
+				series.getData().add(nextData);
+			}
+			
+			
+			}
+			
 	        //defining a series
-	        XYChart.Series series = new XYChart.Series();
-	        series.setName("My portfolio");
+	       
+	       
 	        //populating the series with data
-	        series.getData().add(new XYChart.Data(1, 23));
-	        series.getData().add(new XYChart.Data(2, 14));
-	        series.getData().add(new XYChart.Data(3, 15));
-	        series.getData().add(new XYChart.Data(4, 24));
-	        series.getData().add(new XYChart.Data(5, 34));
-	        series.getData().add(new XYChart.Data(6, 36));
-	        series.getData().add(new XYChart.Data(7, 22));
-	        series.getData().add(new XYChart.Data(8, 45));
-	        series.getData().add(new XYChart.Data(9, 43));
-	        series.getData().add(new XYChart.Data(10, 17));
-	        series.getData().add(new XYChart.Data(11, 29));
-	        series.getData().add(new XYChart.Data(12, 25));
+//	        series.getData().add(new XYChart.Data(1, 23));
+//	        series.getData().add(new XYChart.Data(2, 14));
+//	        series.getData().add(new XYChart.Data(3, 15));
+//	        series.getData().add(new XYChart.Data(4, 24));
+//	        series.getData().add(new XYChart.Data(5, 34));
+//	        series.getData().add(new XYChart.Data(6, 36));
+//	        series.getData().add(new XYChart.Data(7, 22));
+//	        series.getData().add(new XYChart.Data(8, 45));
+//	        series.getData().add(new XYChart.Data(9, 43));
+//	        series.getData().add(new XYChart.Data(10, 17));
+//	        series.getData().add(new XYChart.Data(11, 29));
+//	        series.getData().add(new XYChart.Data(12, 25));
 	        
 	        lineChart.getData().add(series);
 	        creditsPane.getChildren().addAll(lineChart);
