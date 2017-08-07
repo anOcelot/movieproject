@@ -35,23 +35,16 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/movieAPI"/>
 	<classpathentry kind="con" path="org.eclipse.fx.ide.jdt.core.JAVAFX_CONTAINER"/>
-	<classpathentry kind="lib" path="S:/OneDrive - Grand Valley State University/Downloads/slf4j-simple-1.7.21.jar"/>
-	<classpathentry kind="lib" path="S:/OneDrive - Grand Valley State University/Downloads/slf4j-api-1.7.21.jar"/>
-	<classpathentry kind="lib" path="S:/OneDrive - Grand Valley State University/Downloads/jackson-databind-2.7.4.jar"/>
-	<classpathentry kind="lib" path="S:/OneDrive - Grand Valley State University/Downloads/jackson-core-2.7.4.jar"/>
-	<classpathentry kind="lib" path="S:/OneDrive - Grand Valley State University/Downloads/jackson-annotations-2.7.4.jar"/>
-	<classpathentry kind="lib" path="S:/OneDrive - Grand Valley State University/Downloads/guava-19.0.jar"/>
-	<classpathentry kind="lib" path="S:/OneDrive - Grand Valley State University/Downloads/commons-lang3-3.4.jar"/>
-	<classpathentry kind="lib" path="S:/OneDrive - Grand Valley State University/Downloads/commons-codec-1.10.jar"/>
-	<classpathentry kind="lib" path="S:/OneDrive - Grand Valley State University/Downloads/themoviedbapi-1.5.jar"/>
-	<classpathentry kind="lib" path="S:/OneDrive - Grand Valley State University/Downloads/JLS.jar"/>
-	<classpathentry kind="lib" path="C:/Program Files/Java/jdk1.8.0_121/lib/ant-javafx.jar"/>
-	<classpathentry kind="lib" path="C:/Program Files/Java/jdk1.8.0_121/lib/dt.jar"/>
-	<classpathentry kind="lib" path="C:/Program Files/Java/jdk1.8.0_121/lib/javafx-mx.jar"/>
-	<classpathentry kind="lib" path="C:/Program Files/Java/jdk1.8.0_121/lib/jconsole.jar"/>
-	<classpathentry kind="lib" path="C:/Program Files/Java/jdk1.8.0_121/lib/packager.jar"/>
-	<classpathentry kind="lib" path="C:/Program Files/Java/jdk1.8.0_121/lib/sa-jdi.jar"/>
-	<classpathentry kind="lib" path="C:/Program Files/Java/jdk1.8.0_121/lib/tools.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
+	<classpathentry kind="lib" path="C:/Users/slifcoaj/Downloads/jarFiles/commons-codec-1.10 - Copy.jar"/>
+	<classpathentry kind="lib" path="C:/Users/slifcoaj/Downloads/jarFiles/commons-codec-1.10.jar"/>
+	<classpathentry kind="lib" path="C:/Users/slifcoaj/Downloads/jarFiles/commons-lang3-3.4.jar"/>
+	<classpathentry kind="lib" path="C:/Users/slifcoaj/Downloads/jarFiles/guava-19.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/slifcoaj/Downloads/jarFiles/jackson-annotations-2.7.4.jar"/>
+	<classpathentry kind="lib" path="C:/Users/slifcoaj/Downloads/jarFiles/jackson-core-2.7.4.jar"/>
+	<classpathentry kind="lib" path="C:/Users/slifcoaj/Downloads/jarFiles/jackson-databind-2.7.4.jar"/>
+	<classpathentry kind="lib" path="C:/Users/slifcoaj/Downloads/jarFiles/slf4j-api-1.7.21.jar"/>
+	<classpathentry kind="lib" path="C:/Users/slifcoaj/Downloads/jarFiles/slf4j-simple-1.7.21.jar"/>
+	<classpathentry kind="lib" path="C:/Users/slifcoaj/Downloads/jarFiles/themoviedbapi-1.5.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

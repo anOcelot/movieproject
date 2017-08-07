@@ -1,5 +1,6 @@
 package movieproject;
 
+//import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.text.NumberFormat;
 import java.time.LocalDate;
@@ -14,11 +15,13 @@ import java.util.List;
 import java.util.Random;
 
 import info.movito.themoviedbapi.TmdbApi;
+import info.movito.themoviedbapi.TmdbFind;
 import info.movito.themoviedbapi.TmdbMovies;
 import info.movito.themoviedbapi.TmdbPeople;
 import info.movito.themoviedbapi.TmdbPeople.PersonResultsPage;
 import info.movito.themoviedbapi.TmdbSearch;
 import info.movito.themoviedbapi.model.Artwork;
+import info.movito.themoviedbapi.model.Video;
 import info.movito.themoviedbapi.model.core.SessionToken;
 import info.movito.themoviedbapi.model.people.Person;
 import info.movito.themoviedbapi.model.people.PersonCredit;
@@ -45,8 +48,11 @@ import javafx.scene.control.TextField;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
+import javafx.scene.web.WebView;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 /**
  * Main class instantiates a gui which allows the users enter an actor's
@@ -59,6 +65,10 @@ import javafx.stage.Stage;
 public class TimeLineDemo extends Application {
 	
 	private TmdbMovies movies;
+	
+	private TmdbFind findVideo;
+	
+	private Video trailer;
 	
 
 	/** might run faster if these are here. */
@@ -272,7 +282,7 @@ public class TimeLineDemo extends Application {
 	
 	
 
-	private VBox drawFilmBox(PersonCredit credit){
+	private VBox drawFilmBox(final PersonCredit credit){
 		
 		FXMLLoader loader = new FXMLLoader(this.getClass()
 				.getResource("/resultBox.fxml"));
@@ -304,6 +314,21 @@ public class TimeLineDemo extends Application {
 		newBox.getChildren().addAll(titleLabel);
 		newBox.getChildren().addAll(new ImageView(cover));
 		newBox.getChildren().addAll(revenueLabel);
+		
+		
+		newBox.setOnMouseClicked(new EventHandler<MouseEvent>(){
+			
+			//@Override
+			public void handle(MouseEvent event){
+				
+				try {
+					playVideo(credit.getMovieId());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		
 		
 		
 		
@@ -398,6 +423,24 @@ public class TimeLineDemo extends Application {
 	        
 	        lineChart.getData().add(series);
 	        creditsPane.getChildren().addAll(lineChart);
+	}
+	
+	 public void playVideo(int id) throws Exception {
+		 
+		 Stage stage = new Stage(StageStyle.DECORATED);
+		
+		trailer = movies.getVideos(id, "english").get(0);
+		//System.out.println("https://www.youtube.com/watch?v=" + trailer.getKey());
+		 WebView webview = new WebView();
+	    webview.getEngine().load(
+	    	 "https://www.youtube.com/watch?v=" + trailer.getKey()
+	    );
+	    webview.setPrefSize(640, 390);
+	    
+	    stage.setScene(new Scene(webview));
+	    stage.show();
+	    
+	    
 	}
 	 
 	 
