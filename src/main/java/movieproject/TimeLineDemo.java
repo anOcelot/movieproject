@@ -2,16 +2,11 @@ package movieproject;
 
 import java.io.IOException;
 import java.text.NumberFormat;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
+
 import java.util.Iterator;
-import java.util.LinkedList;
+
 import java.util.List;
-import java.util.Random;
+
 
 import info.movito.themoviedbapi.TmdbApi;
 import info.movito.themoviedbapi.TmdbMovies;
@@ -25,7 +20,6 @@ import info.movito.themoviedbapi.model.people.PersonCredit;
 import info.movito.themoviedbapi.model.people.PersonCredits;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -38,11 +32,8 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
-import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
-import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextField;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
@@ -54,13 +45,13 @@ import javafx.stage.Stage;
  * and present a visualization.
  * @author Pieter Holleman, Zachary Hern, Adam Slifco
  * @version 2
- * @since 7-7-2017
+ * @since 8-7-2017
  */
 public class TimeLineDemo extends Application {
 	
+	/** movie TmdbMovies database for grabbing info*/
 	private TmdbMovies movies;
 	
-
 	/** might run faster if these are here. */
 	private TmdbSearch tmdbSearch; 
 
@@ -85,14 +76,15 @@ public class TimeLineDemo extends Application {
 	/** Currently selected actor **/
 	private Person actor;
 	
+	/**data series for currently selected actor */
 	XYChart.Series currentSeries;
 	
-	
+	/**api and sessionToken */
 	TmdbApi tmdbApi;
 	SessionToken sessionToken;
 
 	/**
-	 * when this method is called, JavaFX instantiates 
+	 * when this method is called, JavaFX instantiates and arranges
 	 * the @FXML classes in the background according to the layout.
 	 */
 	public void initialize() {
@@ -146,7 +138,8 @@ public class TimeLineDemo extends Application {
 	}
 	
 	/**
-	 * Basic search method searches for an actor by name starts a thread rendering the results.
+	 * Basic search method searches for an actor by name,
+	 * starts a thread rendering the results.
 	 * @param str The name of the actor to search for
 	 */
 	private void search(final String str) {
@@ -164,14 +157,43 @@ public class TimeLineDemo extends Application {
 		Iterator<Person> iterator = results.iterator();
 			
 		
-		Person currentActor = iterator.next();
+		Person currentActor;
 		
+		while (iterator.hasNext()){
+		currentActor = iterator.next();
 		resultsPane.getChildren().addAll(drawActorBox(currentActor));
 		
+		}
+		
+	}
 	
-		//CreditTask t = new CreditTask();
-		//t.start();
-	
+	private class ChartTask implements Runnable {
+		
+		Thread thread;
+		LineChart chart;
+		public void run() {
+			try{
+			chart = drawChart();
+			System.out.println("chart thread successful");
+			} catch (Exception e){
+				e.printStackTrace();
+			}
+		
+			Platform.runLater(new Runnable(){
+				public void run() {
+					chart.setMinSize(creditsPane.getWidth(), creditsPane.getHeight());
+					creditsPane.getChildren().add(chart);
+				}
+			});
+		}
+		
+		public void start(){
+			
+			if (thread == null){
+				thread = new Thread(this, "credit search");
+				thread.start();
+			}
+		}
 		
 	}
 	
@@ -248,10 +270,13 @@ public class TimeLineDemo extends Application {
 		
 		public void handle(Event event){
 			chartPane.getChildren().clear();
+			creditsPane.getChildren().clear();
 			actor = p;
 			CreditTask creditThread = new CreditTask();
 			creditThread.start();
-			drawChart();
+			ChartTask c = new ChartTask();
+			c.start();
+			
 		}
 		
 		
@@ -348,7 +373,7 @@ public class TimeLineDemo extends Application {
 		return newBox;
 	}
 	
-	private void drawChart(){
+	private LineChart drawChart(){
 		 final NumberAxis yAxis = new NumberAxis();
 	        //final NumberAxis xAxis = new StringAxis("Year", 1900, 2017, 1);
 	      
@@ -365,39 +390,25 @@ public class TimeLineDemo extends Application {
 			series.setName("Career Earnings");
 			for (PersonCredit c: sortedCredits.getCast()){
 	                
-	        
+	        String fulldate = c.getReleaseDate();
 			final long revenue = movies.getMovie(c.getId(), "english").getRevenue();
-			String[] releaseDate = c.getReleaseDate().split("-");
+			//String[] releaseDate = c.getReleaseDate().split("-");
 			final int date;
-//			final int year = Integer.parseInt(releaseDate[2]);
-			if (releaseDate.length == 3) {
-				
-				XYChart.Data nextData = new XYChart.Data(releaseDate[0], revenue);
-				series.getData().add(nextData);
+
+			if (fulldate != null && revenue > 0) {
+				String[] releaseDate = fulldate.split("-");
+				if (releaseDate.length == 3){
+					XYChart.Data nextData = new XYChart.Data(releaseDate[0], revenue);
+					series.getData().add(nextData);
+				}
 			}
 			
 			
 			}
 			
-	        //defining a series
-	       
-	       
-	        //populating the series with data
-//	        series.getData().add(new XYChart.Data(1, 23));
-//	        series.getData().add(new XYChart.Data(2, 14));
-//	        series.getData().add(new XYChart.Data(3, 15));
-//	        series.getData().add(new XYChart.Data(4, 24));
-//	        series.getData().add(new XYChart.Data(5, 34));
-//	        series.getData().add(new XYChart.Data(6, 36));
-//	        series.getData().add(new XYChart.Data(7, 22));
-//	        series.getData().add(new XYChart.Data(8, 45));
-//	        series.getData().add(new XYChart.Data(9, 43));
-//	        series.getData().add(new XYChart.Data(10, 17));
-//	        series.getData().add(new XYChart.Data(11, 29));
-//	        series.getData().add(new XYChart.Data(12, 25));
-	        
 	        lineChart.getData().add(series);
-	        creditsPane.getChildren().addAll(lineChart);
+//	        creditsPane.getChildren().addAll(lineChart);
+	        return lineChart;
 	}
 	 
 	 
