@@ -28,6 +28,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.chart.CategoryAxis;
@@ -329,11 +330,21 @@ public class TimeLineDemo extends Application {
 		
 		final NumberFormat formatter = NumberFormat.getCurrencyInstance();
 		long revenue = movies.getMovie(credit.getId(), "english").getRevenue();
-		Image cover = new Image ("https://image.tmdb.org/t/p/original/" + credit.getPosterPath(), 
+		final Image cover;
+		if(credit.getPosterPath() != null) {
+		cover = new Image ("https://image.tmdb.org/t/p/original/" + credit.getPosterPath(), 
 				240, 
 				360, 
 				false, 
 				false);
+		}
+		else {
+			cover = new Image ("http://www.wellesleysocietyofartists.org/wp-content/uploads/2015/11/image-not-found.jpg", 
+					240, 
+					360, 
+					false, 
+					false);
+		}
 		
 		String title = credit.getMovieTitle() + " " + credit.getReleaseDate() + " ";
 		String revenueStr = formatter.format(revenue);
@@ -346,13 +357,28 @@ public class TimeLineDemo extends Application {
 		newBox.getChildren().addAll(revenueLabel);
 		
 		
-		newBox.setOnMouseClicked(new EventHandler<MouseEvent>(){
+		newBox.setOnMouseEntered(new EventHandler<MouseEvent>(){
 			
 			//@Override
 			public void handle(MouseEvent event){
 				
+				
 				try {
-					playVideo(credit.getMovieId());
+					playVideo(credit.getMovieId(), (VBox)event.getSource());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		newBox.setOnMouseExited(new EventHandler<MouseEvent>(){
+			
+			//@Override
+			public void handle(MouseEvent event){
+				
+				
+				try {
+					VBox box = (VBox) event.getSource();
+					box.getChildren().set(1, new ImageView(cover));
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -441,7 +467,7 @@ public class TimeLineDemo extends Application {
 	        return lineChart;
 	}
 	
-	 public void playVideo(int id) throws Exception {
+	 public void playVideo(int id, VBox vBox) throws Exception {
 		 
 		 Stage stage = new Stage(StageStyle.DECORATED);
 		
@@ -452,6 +478,10 @@ public class TimeLineDemo extends Application {
 	    	 "https://www.youtube.com/watch?v=" + trailer.getKey()
 	    );
 	    webview.setPrefSize(640, 390);
+	    
+	    //vBox.getChildren().addAll(webview);
+	    vBox.getChildren().set(1, webview);
+	    //System.out.println(vBox.getChildren().get(1));
 	    
 	    stage.setScene(new Scene(webview));
 	    stage.show();
