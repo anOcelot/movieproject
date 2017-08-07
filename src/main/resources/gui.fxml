@@ -14,7 +14,7 @@
    <center>
       <TabPane prefHeight="200.0" prefWidth="200.0" stylesheets="@style.css" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
         <tabs>
-          <Tab text="Timeline">
+          <Tab text="Actor">
                <content>
                   <ScrollPane prefHeight="200.0" prefWidth="200.0" stylesheets="@projectStyle.css">
                      <content>
@@ -25,7 +25,7 @@
                      </content>
                   </ScrollPane>
                </content></Tab>
-          <Tab text="contentPane">
+          <Tab text="Statistics">
                <content>
                   <ScrollPane prefHeight="200.0" prefWidth="200.0">
                      <content>
@@ -34,7 +34,7 @@
                   </ScrollPane>
                </content>
           </Tab>
-            <Tab text="contentPane2">
+            <Tab text="Timeline">
                <content>
                   <ScrollPane prefHeight="200.0" prefWidth="200.0">
                      <content>
