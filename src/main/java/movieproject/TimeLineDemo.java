@@ -62,6 +62,8 @@ public class TimeLineDemo extends Application {
 	
 	private TmdbFind findVideo;
 	
+	private WebView webview;
+	
 	private Video trailer;
 	
 	/** might run faster if these are here. */
@@ -378,6 +380,7 @@ public class TimeLineDemo extends Application {
 				
 				try {
 					VBox box = (VBox) event.getSource();
+					webview.getEngine().load(null);
 					box.getChildren().set(1, new ImageView(cover));
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -473,7 +476,7 @@ public class TimeLineDemo extends Application {
 		
 		trailer = movies.getVideos(id, "english").get(0);
 		//System.out.println("https://www.youtube.com/watch?v=" + trailer.getKey());
-		 WebView webview = new WebView();
+		 webview = new WebView();
 	    webview.getEngine().load(
 	    	 "https://www.youtube.com/watch?v=" + trailer.getKey()
 	    );
