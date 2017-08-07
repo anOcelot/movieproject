@@ -33,6 +33,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
@@ -126,7 +129,7 @@ public class TimeLineDemo extends Application {
 	
 		/** loader object interacts with FXML layout */
 		FXMLLoader loader = new FXMLLoader(getClass()
-				.getResource("/Sample.fxml"));
+				.getResource("/gui.fxml"));
 
 	    /** load the scene **/
 		Scene scene = new Scene((Parent) loader.load());
@@ -145,6 +148,8 @@ public class TimeLineDemo extends Application {
 	 */
 	private void search(final String str) {
 		
+		drawChart();
+		
 		/** clear any previous results pane **/
 		resultsPane.getChildren().clear();
 		
@@ -161,8 +166,8 @@ public class TimeLineDemo extends Application {
 		resultsPane.getChildren().addAll(drawActorBox(currentActor));
 		
 	
-		CreditTask t = new CreditTask();
-		t.start();
+		//CreditTask t = new CreditTask();
+		//t.start();
 	
 		
 	}
@@ -200,7 +205,7 @@ public class TimeLineDemo extends Application {
 				System.out.println("Thread succeeded");
 				
 			} catch (Exception e){
-				System.out.println("Thread failed");
+				e.printStackTrace();
 			}
 		}
 		
@@ -237,11 +242,14 @@ public class TimeLineDemo extends Application {
 		}
 		
 		public void handle(Event event){
+			chartPane.getChildren().clear();
 			actor = p;
 			CreditTask creditThread = new CreditTask();
 			creditThread.start();
-			
+			//drawChart();
 		}
+		
+		
 	}
 	
 	
@@ -262,7 +270,7 @@ public class TimeLineDemo extends Application {
 	private VBox drawFilmBox(PersonCredit credit){
 		
 		FXMLLoader loader = new FXMLLoader(this.getClass()
-				.getResource("/SummaryBox.fxml"));
+				.getResource("/resultBox.fxml"));
 		//loader.setRoot(this);
 		VBox newBox = new VBox();
 		
@@ -299,8 +307,8 @@ public class TimeLineDemo extends Application {
 	private VBox drawActorBox(Person person){
 		
 		FXMLLoader loader = new FXMLLoader(this.getClass()
-				.getResource("/SummaryBox.fxml"));
-		//loader.setRoot(this);
+				.getResource("/resultBox.fxml"));
+		
 		VBox newBox = new VBox();
 		Button creditsButton = new Button("Get credits");
 		
@@ -331,6 +339,36 @@ public class TimeLineDemo extends Application {
 		
 		
 		return newBox;
+	}
+	
+	private void drawChart(){
+		 final NumberAxis xAxis = new NumberAxis();
+	        final NumberAxis yAxis = new NumberAxis();
+	        xAxis.setLabel("Number of Month");
+	        //creating the chart
+	        final LineChart<Number,Number> lineChart = 
+	                new LineChart<Number,Number>(xAxis,yAxis);
+	                
+	        lineChart.setTitle("Stock Monitoring, 2010");
+	        //defining a series
+	        XYChart.Series series = new XYChart.Series();
+	        series.setName("My portfolio");
+	        //populating the series with data
+	        series.getData().add(new XYChart.Data(1, 23));
+	        series.getData().add(new XYChart.Data(2, 14));
+	        series.getData().add(new XYChart.Data(3, 15));
+	        series.getData().add(new XYChart.Data(4, 24));
+	        series.getData().add(new XYChart.Data(5, 34));
+	        series.getData().add(new XYChart.Data(6, 36));
+	        series.getData().add(new XYChart.Data(7, 22));
+	        series.getData().add(new XYChart.Data(8, 45));
+	        series.getData().add(new XYChart.Data(9, 43));
+	        series.getData().add(new XYChart.Data(10, 17));
+	        series.getData().add(new XYChart.Data(11, 29));
+	        series.getData().add(new XYChart.Data(12, 25));
+	        
+	        lineChart.getData().add(series);
+	        creditsPane.getChildren().addAll(lineChart);
 	}
 	 
 	 

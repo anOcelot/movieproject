@@ -3,4 +3,4 @@
 <?import javafx.scene.layout.VBox?>
 
 
-<VBox styleClass="summary-box" stylesheets="@projectStyle.css" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" />
+<VBox styleClass="summary-box" stylesheets="@style.css" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" />
