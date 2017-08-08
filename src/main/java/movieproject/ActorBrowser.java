@@ -55,7 +55,7 @@ import javafx.stage.StageStyle;
  * @version 2
  * @since 8-7-2017
  */
-public class TimeLineDemo extends Application {
+public class ActorBrowser extends Application {
 	
 	/** movie TmdbMovies database for grabbing info*/
 	private TmdbMovies movies;
@@ -94,6 +94,8 @@ public class TimeLineDemo extends Application {
 	/**api and sessionToken */
 	TmdbApi tmdbApi;
 	SessionToken sessionToken;
+	
+	WebView webview;
 
 	/**
 	 * when this method is called, JavaFX instantiates and arranges
@@ -364,6 +366,7 @@ public class TimeLineDemo extends Application {
 				
 				
 				try {
+					
 					playVideo(credit.getMovieId(), (VBox)event.getSource());
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -378,6 +381,7 @@ public class TimeLineDemo extends Application {
 				
 				try {
 					VBox box = (VBox) event.getSource();
+					webview.getEngine().load(null);
 					box.getChildren().set(1, new ImageView(cover));
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -473,7 +477,7 @@ public class TimeLineDemo extends Application {
 		
 		trailer = movies.getVideos(id, "english").get(0);
 		//System.out.println("https://www.youtube.com/watch?v=" + trailer.getKey());
-		 WebView webview = new WebView();
+		webview = new WebView();
 	    webview.getEngine().load(
 	    	 "https://www.youtube.com/watch?v=" + trailer.getKey()
 	    );

@@ -7,6 +7,8 @@ import java.util.List;
 
 import static org.hamcrest.CoreMatchers.*;
 
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import info.movito.themoviedbapi.TmdbApi;
@@ -21,7 +23,7 @@ import info.movito.themoviedbapi.model.people.PersonCredits;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
-public class ActorTimeLineTest extends TestCase {
+public class ActorTimeLineTest  {
 	
 	private TmdbApi tmdbApi;
 	private TmdbSearch search;
@@ -31,18 +33,18 @@ public class ActorTimeLineTest extends TestCase {
 	
 	
 
-	@Test 
+	@Before
 	public void testResources() {
 		
 		tmdbApi = new TmdbApi("1ff803482bfef0b19c8614ac392775e8");
-		SessionToken sessionToken = TimeLineDemo.getSessionToken();
+		SessionToken sessionToken = ActorBrowser.getSessionToken();
 		
 	
 		
 		search = tmdbApi.getSearch();
 		people = tmdbApi.getPeople();
 		movies = tmdbApi.getMovies();	
-		results = search.searchPerson("Adam Sandler", true, 0);
+		results = search.searchPerson("Adam Sandler", false, 0);
 		
 
 		
@@ -51,7 +53,7 @@ public class ActorTimeLineTest extends TestCase {
 	@Test
 	public void testConstructor() {
 		
-		testResources();
+		
 	
 		
 		/** Iterator to access results */
@@ -63,10 +65,10 @@ public class ActorTimeLineTest extends TestCase {
 		PersonCredits credits = people.getPersonCredits(actor.getId());
 		
 		ActorTimeLine career = new ActorTimeLine(credits, movies);
-		
-		for (PersonCredit c: career.getCast()) {
-			career.getRevenue(c);
-		}
+//		
+//		for (PersonCredit c: career.getCast()) {
+//			career.getRevenue(c);
+//		}
 		}
 		}
 
@@ -74,7 +76,7 @@ public class ActorTimeLineTest extends TestCase {
 	@Test 
 	public void testComparator(){
 		
-		testResources();
+		
 		Iterator<Person> iterator = results.iterator();
 		Person actor = iterator.next();
 		PersonCredits credits = people.getPersonCredits(actor.getId());
@@ -82,8 +84,8 @@ public class ActorTimeLineTest extends TestCase {
 		
 		List<PersonCredit> c = career.getCast();
 		
-			
-		Assert.assertEquals(career.compare(c.get(0), c.get(10)), -1);
+		/** ensure that credits are being chronologically sorted correctly */
+		Assert.assertEquals(career.compare(c.get(0), c.get(15)), -1);
 		Assert.assertEquals(career.compare(c.get(10), c.get(5)), 1);
 		Assert.assertEquals(career.compare(c.get(15), c.get(15)), 0);
 		
@@ -92,7 +94,8 @@ public class ActorTimeLineTest extends TestCase {
 	@Test
 	public void testGui() {
 		
-		TimeLineDemo.main(null);
+		//launch the gui for functional testing
+		ActorBrowser.main(null);
 	}
 
 }
